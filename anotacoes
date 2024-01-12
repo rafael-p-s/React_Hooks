@@ -5,11 +5,163 @@ npm run dev
 Necessário instalar o **react-router-dom**
 npm install react-router-dom 
 .
-***useState***
+***1-useState***
 Sendo um dos priceipais hooks do React, serve para gerenciar valores, sendo possível consultar e alterar uma veriavel.
 Isso nos permite re-renderizar um componente, o que não acontece com a manipulação de variaveis.
 
+Para se criar um **useState** é necessário importar ele: import {useState} from "react";
+Depois necessário criar um variavel e um setVariavel, recebendo alguma informação:
+let userName = "João" < Variavel normal >
+const [name,setName] = useState("Rafael")
+Para exibir: <p>useState: {name}</p>
+
+Para fazer uma alteração, em caso de nome de variaveis comuns, que não usa o useState, como por exemplo: let userName = "joão" que vai passar a ser "João Mosca", fazer essa variavel userName = "João Mosca" não irá mostar em tela quando se clica em um "button".
+Já variaveis que utiliza do uso de "useState" serão alteradas ao se clicar no "button". Sendo necessário somente criar uma função para fazer essa alteração.
+Exemplo:
+
+const changeNam=()=>{
+    userName = "João Mosca";
+    setName("Matheus Doce");
+}
+<button onClick={chageName}>Clique</button>
+
+A variavel "userName" não vai ser alterado em tela, já o useState irá mudar. Caso queria realmente confirmar, utiliar um console.log(userName) irá confirmar que no console está sendo alterado.
 _________________________________________________________________
 _________________________________________________________________
 _________________________________________________________________
 
+*** 2 - useState e inputs ***
+Atrelando o useState a um input podemos fazer algumas ações, como alterações de um state por evento de "onChange".
+Fazer a limpeza de inputs usando o "Controlled Input", após preenchimento total do form, unir os states e fazer um envio dos dados para o back-end.
+Para começar necessáro criar uma variavel que vai receber a informação:
+const [age,setAge] = useState(18);
+Depois necessário criar o form e o input
+<form onSubmit={handleSubmit}>
+    <input type="text" value={age} onChange={(e)=>setAge(e.target.value)}/>
+    // No caso desse (e), é a passagem do elemento.
+    <input type="submit" value="Enviar"/>
+</form>
+Agora na parte lógicia, será criada a função "handleSubmit":
+const handleSubmit=(e)=>{
+    e.preventDefault();
+    //faz com que não seja "resetao" a pg ao clicar em enviar. Mantendo as informações no input.
+}
+
+_________________________________________________________________
+_________________________________________________________________
+_________________________________________________________________
+
+***useReducer***
+Tem a mesma função que o useState, ele gerencia valores, porém temos a possibilidade de executar uam função na hora da alteração do valor.
+Então temos que useReducer recebe um valor para gerenciar e uma função para alterar este valor.
+
+Para começar é necessário criar uma variavel, porem agora usando "useReducer":
+const [number,dispatch] = useReducer ((state,action)=>{
+    return Math.random(state) // state === number, que no caso vai receber um n° aleatório devido ao "Mth.random"
+})
+
+o "DISPATCH" é onde a função sera chamada.
+
+Na parte para o usuário:
+    <p>Número: {number}</p>
+    <button onClick={dispatch}>Alterar N°</button>
+
+_________________________________________________________________
+_________________________________________________________________
+_________________________________________________________________
+
+***Avançando em useReducer***
+Caso o useReducer fosse utilizado como no exemplo passado, não teria tanta diferença do useState.
+Sendo assim o reducer geralmente contém operações ais complexas, utilizando a estrutura "switch" junto do "action".
+Isso foi mostrado na seção: Context API.
+
+Para iniciar é criado um vetor, para iniciar o Reducer com esses valores:
+const initialTasks = [
+    {id:1,text:"Fazer alguma coisa"},
+    {id:2,text:"Fazer outra coisa"},
+];
+
+Sera criada uma função Reducer:
+
+const taskReducer = (state,action)=>{
+
+}
+
+Aqui sera declarado o Reducer junto do useState:
+
+const [taskText,setTaskText] = useState("")
+const [tasks, dispatchTasks] = useReducer(taskReducer,initialTasks)
+
+/\ Aqui no caso está sendo conectado o useReducer com a função taskReducer, para que seja feita feita uma manupulação.
+
+**Na parte de exebição:**
+<form onSubmit={handleSubmit}>
+    <input type="text" onChange={(e)=>setTaskText(e.target.value)} value={taskText}/>
+    <input type="submit" value="Enviar">
+</form>
+{tasks.map((task)=>(
+    <li key={task.id}>{task.text}</li>
+))}
+
+Necessário criar uma função handleSubmit para fazer o envio:
+
+const handleSubmit=(e)=>{
+    e.preventDefault();
+    dispatchTasks()
+    // /\ esse "dispatchTasks" irá mandar a criação da tarefa. 
+}
+
+Agora irá criar ações para taskReducer:
+
+const taskReducer = (state,action)=>{
+    switch (action.type){
+        case "ADD":
+            const newTask = {
+                id:Math.random(),
+                text: taskText
+            }
+        setTaskText("")//está zerando, para receber uma nova tarefa.
+
+        return [...state,newTask] // irá retornar as tarefas antigas + a nova tarefa.
+    }
+}
+
+Sendo necessário agora voltar para o handleSubmit e invovar a type: "ADD":
+const handleSubmit=(e)=>{
+    e.preventDefault();
+    dispatchTasks({type: "ADD"})
+    // /\ esse "dispatchTasks" irá mandar a criação da tarefa. 
+}
+
+***Caso o usuário já tenha feito uma tarefa e queria deltetar:***
+
+const taskReducer = (state,action)=>{
+    switch (action.type){
+        case "ADD":
+            const newTask = {
+                id:Math.random(),
+                text: taskText
+            }
+        setTaskText("")//está zerando, para receber uma nova tarefa.
+
+        return [...state,newTask] // irá retornar as tarefas antigas + a nova tarefa.
+
+        ***Parte nova***
+        case "DELETE":
+            return state.filter((task)=>task.id !==action.id) //aqui no caso a "action.id" irá pegar um id, toda id que não seja essa id pega irá retornar, a id pega será deletada.
+
+        default:
+            return state;
+    }
+}
+
+**Na parte do usuário**
+Será acrescentado "onDoubleClick={()=>removeTask()}":
+
+<li key={task.id} onDoubleClick={()=>removeTask(task.id)}>{task.text}</li>
+
+Com isso sendo necessário criar uma nova função:
+
+const removeTask =(id)=>{
+    dispatchTasks({type:"DELETE",id})
+}

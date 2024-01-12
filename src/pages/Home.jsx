@@ -1,7 +1,11 @@
-export function Home(){
-    return(
-        <>
-        <h1>Home</h1>
-        </>
-    )
+import { HookUseReducer } from "../components/HookUseReducer";
+import { HookUseState } from "../components/HookUseState";
+
+export function Home() {
+  return (
+    <>
+      <HookUseState />
+      <HookUseReducer />
+    </>
+  );
 }
