@@ -1,0 +1,15 @@
+npm create vite@latest <nome do projeto> --template react
+cd <nome_do_projeto>
+npm install
+npm run dev
+Necessário instalar o **react-router-dom**
+npm install react-router-dom 
+.
+***useState***
+Sendo um dos priceipais hooks do React, serve para gerenciar valores, sendo possível consultar e alterar uma veriavel.
+Isso nos permite re-renderizar um componente, o que não acontece com a manipulação de variaveis.
+
+_________________________________________________________________
+_________________________________________________________________
+_________________________________________________________________
+
