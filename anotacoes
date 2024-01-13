@@ -256,3 +256,71 @@ Essa parte fica dentro do return():
       <p>Valor do useContext: {contextValue}</p>
 
 No resumo, utilizando o useContext evita de ficar tendo de usar "props" para fazer esse tipo de chamada. Ganhando tempo na criação do projeto.
+
+_________________________________________________________________
+_________________________________________________________________
+_________________________________________________________________
+
+*** 10 - useRef ***
+O "useRef" pode ser utilizado como useState para gerenciar valores. Sua diferença é que ele é um "objeto", seu valor está na propriedade "current".
+Outra particularidade do useRed é que ele não re-renderiza o componente ao ser alterado, sendo interessante alguns casos.
+
+A chamada dele no arquivo Home.jsx é normal.
+Agora esse \/ é sua configuração, porém por algum movito ao clicar em qualquer dos botões, counter ou counterB, ele irá exibir no lugar do numberRef.current 2.
+Tentei modificar isso mas não consegui.
+
+import { useEffect, useState, useRef } from "react";
+
+export function HookUseRef() {
+  // 10 - useRef
+  //criando referencia = Ref
+  const numberRef = useRef(0);
+  const [counter, setCounter] = useState(0);
+  const [counterB, setCounterB] = useState(0);
+
+  useEffect(() => {
+    numberRef.current = numberRef.current + 1;
+    //caso eu coloque um:
+    // setCounter(counter+1);
+    //é gerado um loop infinito e ele fica disparando número infinitamente.
+  });
+
+  return (
+    <>
+      <h2>useRef</h2>
+      {/* Para se fazer o acesso, no useRef, é utilizando o ".current" */}
+      <p>O componente renderizou: {numberRef.current} vezes</p>
+      <p>Counter 1: {counter}</p>
+      <button onClick={() => setCounter(counter + 1)}>Contador A</button>
+      <p>Counter 1: {counterB}</p>
+      <button onClick={() => setCounterB(counterB + 1)}>Contador B</button>
+      {/* ideia aqui é: mapear quantas vezes o componente revisou o numberRef, para conseguir altarar o valor dele via useEffect. Para verificar se ele está rederizando o componente, onde o objtivo é ele nao fazer isso. */}
+    </>
+  );
+}
+
+_________________________________________________________________
+_________________________________________________________________
+_________________________________________________________________
+
+*** 11 - useRef e DOM ***
+O "useRef" pode ser utilziado para selecionar elementeos JSX, com isso podemos fazer manipulação de DOM ou aplicar funçõe como a focus, que foca no input.
+Este é um outro uso muito interessante para este hook.
+
+Necessário criar:
+const inputRef = useRef();
+  const[text,setText]=useState("")
+  const handleSubmit=(e)=>{
+    e.preventDefault();
+    // console.log(inputRef)
+
+    setText("") //reseta o valor do input.
+
+    inputRef.current.focus(); //depois de enviar o input, ele irá voltar e focar no input, ficando com aquela marcação para digitar.
+}
+
+Na parte do usuário:
+<form onSubmit={handleSubmit}>
+    <input type="text" ref={inputRef} value={text} onChange={(e)=>setText(e.target.value)}/>
+    <input type="submit" value="Enviar" />
+</form>
