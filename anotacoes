@@ -165,3 +165,94 @@ Com isso sendo necessário criar uma nova função:
 const removeTask =(id)=>{
     dispatchTasks({type:"DELETE",id})
 }
+
+_________________________________________________________________
+_________________________________________________________________
+_________________________________________________________________
+
+***useEffect***
+O "useEffect" é utilizado para várias ações no nosso App, junto com useState é um dos hooks mais utilizados. Sendo possível realizar desde alterações na DOM a requisições HTTP.
+O grande motivo é:conseguimos controlar quantas vezes algo acontece, a sintaxe é formada por uma fução a ser executada e um arrau d dependências.
+
+*** 6 - useEffect com array vazio ***
+Uma estratégia interessante para algumassituações é utilizar o useEffect apenas uma vez.
+Para isso apenas precisamos deixar o array de dependências vazio.
+Ao renderizar o componente a lógica será executada.
+
+exemplo:
+useEffect(() => {
+    console.log("Será executado somente 1x.");
+}, []);
+
+*** 7 - Array de dependências do useEffect ***
+Outra maneira de controlar quando o useEffect será executado é "colocando algum item no array de dependência".
+Assim sempre que um item for alterado, teremos o useEffect sendo executado novamente.
+Nos fornecendo um maior controle de quando a função deve ou não ser executada.
+
+exemplo:
+const [anotherNumber, setAnotherNumber] = useState(1);
+useEffect(() => {
+    console.log("Sou executado somente quando o anotherNumber mudar!");
+}, [anotherNumber]);
+
+É possível colocar um "if" dentro do useEffect do anotherNumber, para fazer uma verificação se o anotherNumber for < 0.
+
+*** 8 - Limpeza do useEffect ***
+Alguns efeitos precisam ter um "técnica de cleanup(limpeza)" para garantir o seu funcionamento.
+Não fazer isso pode gerar "erros de compotamento indesejados".
+Exemplo: um timeout que ao mudar de pg pode continuar a ser executado, motivado pela falta dessa limpeza.
+
+Na prática vamos ter um useEffect sendo utilizado, para que ele seja "pausado" é necessário criar uma variavel que no final retorne vázia, ou mais simplemente seja limpa.
+Exemplo:
+useEffect(() => {
+    const timer = setTimeout(() => {
+      console.log("Olá mundo.");
+      setAnotherNumber(anotherNumber + 1);
+    }, 2000);
+    return () => clearTimeout(timer); //<< isso pode gerar um ERRO/vazamento de memória, se não for colocado.
+  }, [anotherNumber]);
+
+_________________________________________________________________
+_________________________________________________________________
+_________________________________________________________________
+
+*** 9 - useContext ***
+É o hook utilizado para consumir contexto, da Context API.
+Sendo necessário criar também um "Provider", para 'envolver os componentes" que receberão os valores compartilhados.
+Para no final fazer o uso do hook onde é necessário.
+
+É necessário criar um arquivo, no caso HookUseContext.jsx, nele irá conter a base do código.
+
+import { createContext } from "react";
+
+export const SomeContext = createContext();
+
+// PROVIDER
+export const HookUseContext = ({ children }) => {
+  const contextValue = "testing context";
+
+  return (
+    <SomeContext.Provider value={{contextValue}}>{children}</SomeContext.Provider>
+  );
+};
+
+Depois é necessário fazer a chamada do mesmo no App.jsx, "englobando" tudo para ele ficar no topo da hierarquia, lembrando de fazer o import normal:
+
+ <HookUseContext>
+    --TUDO TEM QUE FICAR AQUI DENTRO--
+ </HookUseContext>
+
+ Depois nos outros arquivos, Home e About, é necessário fazer o consumo desse Context:
+
+//useContext
+import { useContext } from "react";
+import { SomeContext } from "../components/HookuseContext";
+
+Essa parte \/ fica dentro da function:
+//vou consumir o Context
+  const { contextValue } = useContext(SomeContext);
+
+Essa parte fica dentro do return():
+      <p>Valor do useContext: {contextValue}</p>
+
+No resumo, utilizando o useContext evita de ficar tendo de usar "props" para fazer esse tipo de chamada. Ganhando tempo na criação do projeto.
