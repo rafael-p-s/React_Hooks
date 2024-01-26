@@ -324,3 +324,9 @@ Na parte do usuário:
     <input type="text" ref={inputRef} value={text} onChange={(e)=>setText(e.target.value)}/>
     <input type="submit" value="Enviar" />
 </form>
+
+_________________________________________________________________
+_________________________________________________________________
+_________________________________________________________________
+
+*** 12 - useCallback ***
